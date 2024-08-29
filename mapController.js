@@ -38,3 +38,22 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
         })
 });
+
+function watchCamera(event) {
+    [id, camName] = event.target.id.split('/');
+
+    cameraName.innerHTML = camName;
+    cameraBox.style.display = 'flex';
+    cameraImage.src = 'https://webcams.nyctmc.org/api/cameras/' + id + '/image';
+}
+
+function closeCamera() {
+    cameraBox.style.display = 'none';
+    cameraName.innerHTML = '';
+}
+
+window.addEventListener("click", (event) => {
+    if (event.target == cameraBox) {
+        closeCamera();
+    }
+})
