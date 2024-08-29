@@ -20,18 +20,18 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 var popupText = [];
                 popupText.push(
-                    '<div>',
-                        '<span class="popupLabel" >Area: </span>', camera.area,
-                        '<br>',
-                        '<span class="popupLabel" >Name: </span>', camera.name,
-                        '<br>',
-                        '<div class="popupButtonBox" >',
-                            '<button type="button" class="popupButton"',
-                                'id="', camera.id + '/' + camera.name,'"',
-                                'onclick="watchCamera(event)"'
-                                ,'>View</button>',
-                        '</div',
-                    '</div>'
+                    `<div>
+                        <span class="popupLabel" >Area: </span>${camera.area}
+                        <br>
+                        <span class="popupLabel" >Name: </span>${camera.name}
+                        <br>
+                        <div class="popupButtonBox" >
+                            <button type="button" class="popupButton"
+                                id="${camera.id}/${camera.name}"
+                                onclick="watchCamera(event)"
+                                >View</button>'
+                        </div>
+                    </div>`
                 )
 
                 marker.bindPopup(popupText.join(''));
@@ -39,17 +39,30 @@ document.addEventListener('DOMContentLoaded', async function () {
         })
 });
 
+var cameraIntervalId = undefined;
+var currCameraId = undefined;
+function setCameraURL() {
+    cameraImage.src = `https://webcams.nyctmc.org/api/cameras/${currCameraId}/image?cacheAvoidance=${Math.floor(Math.random() * 100000)}`;
+}
+
 function watchCamera(event) {
     [id, camName] = event.target.id.split('/');
 
     cameraName.innerHTML = camName;
     cameraBox.style.display = 'flex';
-    cameraImage.src = 'https://webcams.nyctmc.org/api/cameras/' + id + '/image';
+
+    currCameraId = id;
+    setCameraURL();
+    cameraIntervalId = setInterval(setCameraURL, 1000);
 }
 
 function closeCamera() {
     cameraBox.style.display = 'none';
     cameraName.innerHTML = '';
+    
+    clearInterval(cameraIntervalId);
+    cameraIntervalId = undefined;
+    currCameraId = undefined;
 }
 
 window.addEventListener("click", (event) => {
