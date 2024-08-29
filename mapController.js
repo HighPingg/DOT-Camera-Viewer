@@ -17,6 +17,24 @@ document.addEventListener('DOMContentLoaded', async function () {
             data.forEach(camera => {
                 // Create a marker with popup and add it to the map
                 var marker = L.marker([camera.latitude, camera.longitude]).addTo(map);
+
+                var popupText = [];
+                popupText.push(
+                    '<div>',
+                        '<span class="popupLabel" >Area: </span>', camera.area,
+                        '<br>',
+                        '<span class="popupLabel" >Name: </span>', camera.name,
+                        '<br>',
+                        '<div class="popupButtonBox" >',
+                            '<button type="button" class="popupButton"',
+                                'id="', camera.id + '/' + camera.name,'"',
+                                'onclick="watchCamera(event)"'
+                                ,'>View</button>',
+                        '</div',
+                    '</div>'
+                )
+
+                marker.bindPopup(popupText.join(''));
             });
         })
 });
