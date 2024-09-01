@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                     icon: L.icon({
                         iconUrl: 'assets/cctv_icon.png',
                         iconSize: [38],
-                        iconAnchor: [18.5, 45]
+                        iconAnchor: [18.5, 45],
+                        popupAnchor: [0, -46]
                     })
                 }).addTo(map);
 
