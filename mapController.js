@@ -16,7 +16,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         .then(data => {
             data.forEach(camera => {
                 // Create a marker with popup and add it to the map
-                var marker = L.marker([camera.latitude, camera.longitude]).addTo(map);
+                var marker = L.marker([camera.latitude, camera.longitude], {
+                    icon: L.icon({
+                        iconUrl: 'assets/cctv_icon.png',
+                        iconSize: [38],
+                        iconAnchor: [18.5, 45]
+                    })
+                }).addTo(map);
 
                 var popupText = [];
                 popupText.push(
