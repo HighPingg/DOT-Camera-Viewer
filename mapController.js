@@ -1,3 +1,5 @@
+var cameraListByArea = {}
+
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize Map
     var map = L.map('map', {zoomControl: false}).setView([40.730610, -73.935242], 11);
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 var marker = L.marker([camera.latitude, camera.longitude], {
                     icon: L.icon({
                         iconUrl: 'assets/cctv_icon.png',
-                        iconSize: [38],
+                        iconSize: [38, 38],
                         iconAnchor: [18.5, 45],
                         popupAnchor: [0, -46]
                     })
@@ -36,18 +38,50 @@ document.addEventListener('DOMContentLoaded', async function () {
                             <button type="button" class="popupButton"
                                 id="${camera.id}/${camera.name}"
                                 onclick="watchCamera(event)"
-                                >View</button>'
+                                >View</button>
                         </div>
                     </div>`
                 )
 
                 marker.bindPopup(popupText.join(''));
+
+                // Add to Camera list
+                if (cameraListByArea[camera.area] == undefined) {
+                    cameraListByArea[camera.area] = [camera];
+                } else {
+                    cameraListByArea[camera.area].push(camera);
+                }
             });
-        })
+        });
 });
+
+function getCameraList(area, list) {
+    var elem = `<div class="areaList">
+                    <h2>${area}</h2>`;
+
+    for (var i = 0; i < list.length; i++) {
+        if (i != 0) {
+            elem += `<hr class="solid">`;
+        }
+
+        elem += `
+            <div class="cameraListItem">
+                ${list[i].name}
+                <button class="popupButton">View</button>
+            </div>
+        `;
+    }
+
+    elem += `</div>`;
+
+    return elem;
+}
 
 var cameraIntervalId = undefined;
 var currCameraId = undefined;
+var isMenuActive = false;
+var currentMenuSelection = undefined;
+
 function setCameraURL() {
     cameraImage.src = `https://webcams.nyctmc.org/api/cameras/${currCameraId}/image?cacheAvoidance=${Math.floor(Math.random() * 100000)}`;
 }
@@ -77,3 +111,50 @@ window.addEventListener("click", (event) => {
         closeCamera();
     }
 })
+
+function toggleOpenMenu() {
+    if (currentMenuSelection == undefined) {
+        controlMenu.style.display = "block";
+        currentMenuSelection = "List";
+        document.getElementById(`${currentMenuSelection}menuSelectButton`).disabled = true;
+        
+        setMenuContent('List');
+
+    } else {
+        controlMenu.style.display = "none";
+        currentMenuSelection = undefined;
+
+        setMenuContent(null);
+        for (var i = 0; i < controlMenuButtons.children.length; i++) {
+            controlMenuButtons.children[i].disabled = false;
+        }
+    }
+}
+
+function switchMenuPages(event) {
+    newPage = event.target.innerHTML;
+
+    // Change button highlight
+    document.getElementById(`${currentMenuSelection}menuSelectButton`).disabled = false;
+    document.getElementById(`${newPage}menuSelectButton`).disabled = true;
+
+    setMenuContent(newPage);
+
+    currentMenuSelection = newPage;
+}
+
+function setMenuContent(menuPage) {
+    var innerContent = '';
+    switch (menuPage) {
+        case "List":
+            for (const area in cameraListByArea) {
+                innerContent += getCameraList(area, cameraListByArea[area]);
+            }
+            break;
+    
+        default:
+            break;
+    }
+
+    menuContentBox.innerHTML = innerContent;
+}

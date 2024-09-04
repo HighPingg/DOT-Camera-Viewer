@@ -65,7 +65,7 @@
 
 .popup {
     position: fixed;
-    z-index: 401;
+    z-index: 402;
     width: 100vw;
     height: 100vh;
     overflow: auto;
@@ -126,4 +126,112 @@
     width: 80vw;
     max-height: 70vh;
     object-fit: contain;
+}
+
+.menu {
+    z-index: 401;
+    position: fixed;
+    margin-top: 15px;
+    margin-left: 15px;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
+    max-width: 500px;
+    max-height: 500px;
+}
+
+#menuButton {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.3rem;
+    height: 2.4rem;
+    width: 2.4rem;
+    border-radius: 50%;
+    color: black;
+    transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+}
+
+#menuButton:hover {
+    background-color: rgba(10, 10, 10, 0.3);
+    color: black;
+}
+
+#menuButton:active {
+    background: #424242;
+    color: black;
+}
+
+.menuContent {
+    height: calc(90% - 2.4rem);
+    width: calc(100% - 2.4rem);
+    background: #c8c8c8;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 5px 5px 5px gray;
+    display: none;
+}
+
+.menuSelect {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: fit-content;
+}
+
+.menuSelect button {
+    background: none;
+    border: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 0.3rem;
+    transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    border-radius: 100px;
+    padding: 5px 15px;
+    cursor: pointer;
+    height: fit-content;
+    width: fit-content;
+    margin: 5px;
+    overflow: hidden;
+    padding: 5px 20px ;
+    vertical-align: middle;
+}
+
+.menuSelect button:hover,
+            button:disabled {
+    background-color: #1e5fb5;
+    color: white;
+}
+
+#menuContentBox {
+    height: calc(100% - 1.8rem - 10px - 10px);
+    overflow-x: hidden;
+    background: white;
+    margin-top: 10px;
+    border-radius: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2rem;
+    padding-top: 1px;
+    display: flex;
+    flex-direction: column;
+}
+
+.areaList {
+    margin: 15px;
+}
+
+.areaList h2 {
+    margin-bottom: 10px;
+}
+
+.cameraListItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    margin: 5px 0;
+    vertical-align: middle;
+    align-items: center;
 }
