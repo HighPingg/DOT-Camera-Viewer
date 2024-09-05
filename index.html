@@ -26,14 +26,16 @@
         </div>
     </div>
 
-    <div class="menu" >
-        <button id="menuButton" onclick="toggleOpenMenu()" ><i class="fa fa-bars"></i></button>
-        <div class="menuContent" id="controlMenu">
-            <div class="menuSelect" id="controlMenuButtons" >
-                <button class="menuSelectButton" id="ListmenuSelectButton" onclick="switchMenuPages(event)">List</button>
-                <button class="menuSelectButton" id="SettingsmenuSelectButton" onclick="switchMenuPages(event)">Settings</button>
+    <div id="menuContainingBox">
+        <div class="menu" >
+            <button id="menuButton" onclick="toggleOpenMenu()" ><i class="fa fa-bars"></i></button>
+            <div class="menuContent" id="controlMenu">
+                <div class="menuSelect" id="controlMenuButtons" >
+                    <button class="menuSelectButton" id="ListmenuSelectButton" onclick="switchMenuPages(event)">List</button>
+                    <button class="menuSelectButton" id="SettingsmenuSelectButton" onclick="switchMenuPages(event)">Settings</button>
+                </div>
+                <div id="menuContentBox"></div>
             </div>
-            <div id="menuContentBox"></div>
         </div>
     </div>
 

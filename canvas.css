@@ -128,8 +128,15 @@
     object-fit: contain;
 }
 
-.menu {
+#menuContainingBox {
+    height: 0;
+    width: 0;
+    position: fixed;
     z-index: 401;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.menu {
     position: fixed;
     margin-top: 15px;
     margin-left: 15px;
@@ -206,14 +213,14 @@
 }
 
 #menuContentBox {
-    height: calc(100% - 1.8rem - 10px - 10px);
+    height: calc(100% - 1.8rem - 10px - 20px);
     overflow-x: hidden;
     background: white;
     margin-top: 10px;
     border-radius: 20px;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.2rem;
-    padding-top: 1px;
+    padding-top: 10px;
+    padding-left: 10px;
     display: flex;
     flex-direction: column;
 }
@@ -222,7 +229,7 @@
     margin: 15px;
 }
 
-.areaList h2 {
+.areaList h3 {
     margin-bottom: 10px;
 }
 
@@ -234,4 +241,93 @@
     margin: 5px 0;
     vertical-align: middle;
     align-items: center;
+}
+
+#menuContentBox fieldset {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+#menuContentBox input + label {
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 25.5px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 19.5px;
+  width: 19.5px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(19.5px);
+  -ms-transform: translateX(19.5px);
+  transform: translateX(19.5px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 25.5px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+#mapOptions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: fit-content;
+    margin: 10px;
+}
+
+.mapSetting {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: large;
 }
