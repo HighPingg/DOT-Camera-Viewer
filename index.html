@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>DOT Camera Viewer</title>
 
     <!-- Leaflet import -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
     
     <link rel="stylesheet" type="text/css" href="./canvas.css">
 </head>
@@ -21,13 +26,21 @@
         </div>
     </div>
 
+    <div id="menuContainingBox">
+        <div class="menu" >
+            <button id="menuButton" onclick="toggleOpenMenu()" ><i class="fa fa-bars"></i></button>
+            <div class="menuContent" id="controlMenu">
+                <div class="menuSelect" id="controlMenuButtons" >
+                    <button class="menuSelectButton" id="ListmenuSelectButton" onclick="switchMenuPages(event)">List</button>
+                    <button class="menuSelectButton" id="SettingsmenuSelectButton" onclick="switchMenuPages(event)">Settings</button>
+                </div>
+                <div id="menuContentBox"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="map"></div>
 
-    <!-- Leaflet import -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
-    
     <script type="text/javascript" src="./mapController.js"></script>
 </body>
 </html>
