@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         <br>
                         <div class="popupButtonBox" >
                             <button type="button" class="popupButton"
-                                id="${camera.id}/${camera.name}"
+                                id="${camera.id}/${camera.name}/marker"
                                 onclick="watchCamera(event)"
                                 >View</button>
                         </div>
@@ -60,30 +60,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 });
 
-function getCameraList(area, list) {
-    if (filterList.has(area)) return '';
-
-    var elem = `<div class="areaList">
-                    <h3>${area}</h3>`;
-
-    for (var i = 0; i < list.length; i++) {
-        if (i != 0) {
-            elem += `<hr class="solid">`;
-        }
-
-        elem += `
-            <div class="cameraListItem">
-                ${list[i].name}
-                <button class="popupButton">View</button>
-            </div>
-        `;
-    }
-
-    elem += `</div>`;
-
-    return elem;
-}
-
 var cameraIntervalId = undefined;
 var currCameraId = undefined;
 var isMenuActive = false;
@@ -95,7 +71,7 @@ function setCameraURL() {
 }
 
 function watchCamera(event) {
-    [id, camName] = event.target.id.split('/');
+    [id, camName, _] = event.target.id.split('/');
 
     cameraName.innerHTML = camName;
     cameraBox.style.display = 'flex';
@@ -217,6 +193,34 @@ function setMenuContent(menuPage) {
     }
 
     menuContentBox.innerHTML = innerContent;
+}
+
+function getCameraList(area, list) {
+    if (filterList.has(area)) return '';
+
+    var elem = `<div class="areaList">
+                    <h3>${area}</h3>`;
+
+    for (var i = 0; i < list.length; i++) {
+        if (i != 0) {
+            elem += `<hr class="solid">`;
+        }
+        elem += `
+            <div class="cameraListItem">
+                ${list[i].name}
+                <button class="popupButton"
+                        id="${list[i].id}/${list[i].name}/list"
+                        onclick="watchCamera(event)"
+                        >
+                    View
+                </button>
+            </div>
+        `;
+    }
+
+    elem += `</div>`;
+
+    return elem;
 }
 
 window.addEventListener("click", (event) => {
