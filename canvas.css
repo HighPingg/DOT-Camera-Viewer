@@ -140,8 +140,8 @@
     position: fixed;
     margin-top: 15px;
     margin-left: 15px;
-    width: calc(100vw - 20px);
-    height: calc(100vh - 20px);
+    width: 2.4rem;
+    height: 2.4rem;
     max-width: 500px;
     max-height: 500px;
 }

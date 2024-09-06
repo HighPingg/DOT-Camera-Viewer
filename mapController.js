@@ -99,6 +99,10 @@ function toggleOpenMenu() {
         menuContainingBox.style.height = '100vh';
         menuContainingBox.style.width = '100vw';
 
+        // Change menu length
+        menuBox.style.height = 'calc(100vh - 20px)';
+        menuBox.style.width = 'calc(100vw - 20px)';
+
         // Display Menu Content
         document.getElementById(`${currentMenuSelection}menuSelectButton`).disabled = true;
         setMenuContent('List');
@@ -116,6 +120,10 @@ function toggleOpenMenu() {
         // Hide opacity background
         menuContainingBox.style.height = '0';
         menuContainingBox.style.width = '0';
+
+        // Change menu length
+        menuBox.style.height = '2.4rem';
+        menuBox.style.width = '2.4rem';
     }
 }
 
