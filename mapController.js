@@ -3,6 +3,8 @@ var cameraIDsByArea = {};
 var filterList = new Set();
 var map = undefined;
 
+var markerClusters = {};
+
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize Map
     map = L.map('map', {zoomControl: false}).setView([40.730610, -73.935242], 11);
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         iconAnchor: [18.5, 45],
                         popupAnchor: [0, -46]
                     })
-                }).addTo(map);
+                });
 
                 var popupText = [];
                 popupText.push(
@@ -52,13 +54,46 @@ document.addEventListener('DOMContentLoaded', async function () {
                 if (cameraListByArea[camera.area] == undefined) {
                     cameraListByArea[camera.area] = [camera];
                     cameraIDsByArea[camera.area] = [marker];
+
+                    markerClusters[camera.area] = L.markerClusterGroup();
                 } else {
                     cameraListByArea[camera.area].push(camera);
                     cameraIDsByArea[camera.area].push(marker);
                 }
+                
+                markerClusters[camera.area].addLayer(marker);
+            });
+
+            // Draw all cameras
+            Object.keys(cameraIDsByArea).forEach((area) => {
+                showByAreaMarker(area);
             });
         });
 });
+
+function showByAreaMarker(area) {
+    if (filterList.has(area)) return;
+    
+    if (mapClustering) {
+        if (!filterList.has(area)) {
+            map.addLayer(markerClusters[area]);
+        }
+    } else {
+        cameraIDsByArea[area].forEach((marker) => {
+            map.addLayer(marker);
+        })
+    }
+}
+
+function clearMarkersInArea(area) {
+    if (mapClustering) {
+        map.removeLayer(markerClusters[area]);
+    } else {
+        cameraIDsByArea[area].forEach((marker) => {
+            map.removeLayer(marker);
+        })
+    }
+}
 
 var cameraIntervalId = undefined;
 var currCameraId = undefined;
@@ -143,14 +178,10 @@ function filterToggle(element) {
     toggleName = element.id.split('Checkbox')[0];
     if (element.checked) {
         filterList.delete(toggleName);
-        cameraIDsByArea[toggleName].forEach((marker) => {
-            map.addLayer(marker);
-        })
+        showByAreaMarker(toggleName);
     } else {
         filterList.add(toggleName);
-        cameraIDsByArea[toggleName].forEach((marker) => {
-            map.removeLayer(marker);
-        })
+        clearMarkersInArea(toggleName);
     }
 }
 
@@ -187,7 +218,8 @@ function setMenuContent(menuPage) {
                     <div class="mapSetting">
                         Map Clustering
                         <label class="switch">
-                            <input type="checkbox" ${mapClustering ? 'checked' : null}>
+                            <input type="checkbox" ${mapClustering ? 'checked' : null}
+                                   onchange={toggleClustering()}>
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -231,10 +263,22 @@ function getCameraList(area, list) {
     return elem;
 }
 
+function toggleClustering() {
+    // Remove all current markers and then redraw
+    Object.keys(cameraIDsByArea).forEach((area) => {
+        clearMarkersInArea(area);
+    });
+
+    mapClustering = !mapClustering;
+    Object.keys(cameraIDsByArea).forEach((area) => {
+        showByAreaMarker(area);
+    });
+}
+
 window.addEventListener("click", (event) => {
     if (event.target == cameraBox) {
         closeCamera();
-    } else if (event.target == menuContainingBox) {
+    } else if (event.target == menuContainingBox || event.target == menuBox) {
         toggleOpenMenu();
     }
 })
