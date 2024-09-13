@@ -1,13 +1,13 @@
 var cameraListByArea = {};
 var cameraIDsByArea = {};
-var filterList = new Set();
+var filterList = localStorage.getItem('filterList') ? new Set(localStorage.getItem('filterList').split(',')) : new Set();
 var map = undefined;
 
 var markerClusters = {};
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize Map
-    map = L.map('map', {zoomControl: false}).setView([40.730610, -73.935242], 11);
+    map = L.map('map', {zoomControl: false, minZoom: 11}).setView([40.730610, -73.935242], 11);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://carto.com/legal">Carto</a>'
     }).addTo(map);
@@ -99,7 +99,7 @@ var cameraIntervalId = undefined;
 var currCameraId = undefined;
 var isMenuActive = false;
 var currentMenuSelection = undefined;
-var mapClustering = true;
+var mapClustering = localStorage.getItem("mapClustering") == "false" ? false : true;
 
 function setCameraURL() {
     cameraImage.src = `https://webcams.nyctmc.org/api/cameras/${currCameraId}/image?cacheAvoidance=${Math.floor(Math.random() * 100000)}`;
@@ -120,9 +120,19 @@ function closeCamera() {
     cameraBox.style.display = 'none';
     cameraName.innerHTML = '';
     
+    if (cameraIntervalId !== undefined) {
+        clearInterval(cameraIntervalId);
+        cameraIntervalId = undefined;
+    }
+
+    currCameraId = undefined;
+}
+
+function cameraError() {
     clearInterval(cameraIntervalId);
     cameraIntervalId = undefined;
-    currCameraId = undefined;
+
+    cameraImage.src = './assets/notfound.png';
 }
 
 function toggleOpenMenu() {
@@ -183,6 +193,8 @@ function filterToggle(element) {
         filterList.add(toggleName);
         clearMarkersInArea(toggleName);
     }
+
+    localStorage.setItem('filterList', Array.from(filterList));
 }
 
 function setMenuContent(menuPage) {
@@ -219,7 +231,9 @@ function setMenuContent(menuPage) {
                         Map Clustering
                         <label class="switch">
                             <input type="checkbox" ${mapClustering ? 'checked' : null}
-                                   onchange={toggleClustering()}>
+                                   onchange={toggleClustering()}
+                                   name="clusterToggle"
+                                   >
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -270,6 +284,7 @@ function toggleClustering() {
     });
 
     mapClustering = !mapClustering;
+    localStorage.setItem('mapClustering', mapClustering);
     Object.keys(cameraIDsByArea).forEach((area) => {
         showByAreaMarker(area);
     });
