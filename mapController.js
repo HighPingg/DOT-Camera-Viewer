@@ -1,11 +1,13 @@
 var cameraListByArea = {};
 var cameraIDsByArea = {};
-var filterList = new Set();
+var filterList = localStorage.getItem('filterList') ? new Set(localStorage.getItem('filterList').split(',')) : new Set();
 var map = undefined;
+
+var markerClusters = {};
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize Map
-    map = L.map('map', {zoomControl: false}).setView([40.730610, -73.935242], 11);
+    map = L.map('map', {zoomControl: false, minZoom: 11}).setView([40.730610, -73.935242], 11);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://carto.com/legal">Carto</a>'
     }).addTo(map);
@@ -23,12 +25,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                 // Create a marker with popup and add it to the map
                 var marker = L.marker([camera.latitude, camera.longitude], {
                     icon: L.icon({
-                        iconUrl: 'assets/cctv_icon.png',
+                        iconUrl: './assets/cctv_icon.svg',
                         iconSize: [38, 45],
                         iconAnchor: [18.5, 45],
                         popupAnchor: [0, -46]
                     })
-                }).addTo(map);
+                });
 
                 var popupText = [];
                 popupText.push(
@@ -52,19 +54,52 @@ document.addEventListener('DOMContentLoaded', async function () {
                 if (cameraListByArea[camera.area] == undefined) {
                     cameraListByArea[camera.area] = [camera];
                     cameraIDsByArea[camera.area] = [marker];
+
+                    markerClusters[camera.area] = L.markerClusterGroup();
                 } else {
                     cameraListByArea[camera.area].push(camera);
                     cameraIDsByArea[camera.area].push(marker);
                 }
+                
+                markerClusters[camera.area].addLayer(marker);
+            });
+
+            // Draw all cameras
+            Object.keys(cameraIDsByArea).forEach((area) => {
+                showByAreaMarker(area);
             });
         });
 });
+
+function showByAreaMarker(area) {
+    if (filterList.has(area)) return;
+    
+    if (mapClustering) {
+        if (!filterList.has(area)) {
+            map.addLayer(markerClusters[area]);
+        }
+    } else {
+        cameraIDsByArea[area].forEach((marker) => {
+            map.addLayer(marker);
+        })
+    }
+}
+
+function clearMarkersInArea(area) {
+    if (mapClustering) {
+        map.removeLayer(markerClusters[area]);
+    } else {
+        cameraIDsByArea[area].forEach((marker) => {
+            map.removeLayer(marker);
+        })
+    }
+}
 
 var cameraIntervalId = undefined;
 var currCameraId = undefined;
 var isMenuActive = false;
 var currentMenuSelection = undefined;
-var mapClustering = true;
+var mapClustering = localStorage.getItem("mapClustering") == "false" ? false : true;
 
 function setCameraURL() {
     cameraImage.src = `https://webcams.nyctmc.org/api/cameras/${currCameraId}/image?cacheAvoidance=${Math.floor(Math.random() * 100000)}`;
@@ -85,9 +120,19 @@ function closeCamera() {
     cameraBox.style.display = 'none';
     cameraName.innerHTML = '';
     
+    if (cameraIntervalId !== undefined) {
+        clearInterval(cameraIntervalId);
+        cameraIntervalId = undefined;
+    }
+
+    currCameraId = undefined;
+}
+
+function cameraError() {
     clearInterval(cameraIntervalId);
     cameraIntervalId = undefined;
-    currCameraId = undefined;
+
+    cameraImage.src = './assets/notfound.png';
 }
 
 function toggleOpenMenu() {
@@ -143,15 +188,13 @@ function filterToggle(element) {
     toggleName = element.id.split('Checkbox')[0];
     if (element.checked) {
         filterList.delete(toggleName);
-        cameraIDsByArea[toggleName].forEach((marker) => {
-            map.addLayer(marker);
-        })
+        showByAreaMarker(toggleName);
     } else {
         filterList.add(toggleName);
-        cameraIDsByArea[toggleName].forEach((marker) => {
-            map.removeLayer(marker);
-        })
+        clearMarkersInArea(toggleName);
     }
+
+    localStorage.setItem('filterList', Array.from(filterList));
 }
 
 function setMenuContent(menuPage) {
@@ -187,7 +230,10 @@ function setMenuContent(menuPage) {
                     <div class="mapSetting">
                         Map Clustering
                         <label class="switch">
-                            <input type="checkbox" ${mapClustering ? 'checked' : null}>
+                            <input type="checkbox" ${mapClustering ? 'checked' : null}
+                                   onchange={toggleClustering()}
+                                   name="clusterToggle"
+                                   >
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -231,10 +277,70 @@ function getCameraList(area, list) {
     return elem;
 }
 
+function toggleClustering() {
+    // Remove all current markers and then redraw
+    Object.keys(cameraIDsByArea).forEach((area) => {
+        clearMarkersInArea(area);
+    });
+
+    mapClustering = !mapClustering;
+    localStorage.setItem('mapClustering', mapClustering);
+    Object.keys(cameraIDsByArea).forEach((area) => {
+        showByAreaMarker(area);
+    });
+}
+
+var currMarker;
+var pannedMap = false;
+
+function locateUser() {
+    if (!currMarker) {
+        map.locate({
+            enableHighAccuracy: true,
+            watch: true
+        });
+        
+        map.on('locationfound', onLocationFound);
+        map.on('movestart', onMapPan);
+    } else {
+        map.setView(currMarker.getLatLng(), 15);
+    }
+
+    if (currMarker) {
+        locateIcon.style["background-color"] = "#0A66C2";
+    }
+}
+
+function onLocationFound(e) {
+    if (!currMarker) {
+        currMarker = L.marker(e.latlng, {
+            icon: L.icon({
+                iconUrl: './assets/currentLocationMarker.svg',
+                iconSize: [38, 45],
+                iconAnchor: [18.5, 45]
+            })
+        }).addTo(map);
+
+        map.setView(e.latlng, 15);
+        locateIcon.style["background-color"] = "#0A66C2";
+
+    } else {
+        currMarker.setLatLng(e.latlng);
+    }
+}
+
+function onMapPan(e) {
+    if (pannedMap) {
+        locateIcon.style["background-color"] = "grey";
+    } else {
+        pannedMap = true;
+    }
+}
+
 window.addEventListener("click", (event) => {
     if (event.target == cameraBox) {
         closeCamera();
-    } else if (event.target == menuContainingBox) {
+    } else if (event.target == menuContainingBox || event.target == menuBox) {
         toggleOpenMenu();
     }
 })

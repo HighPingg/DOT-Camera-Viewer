@@ -15,6 +15,11 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
     
+    <!-- Leaflet Marker Imports -->
+    <link rel="stylesheet" href="./dist/MarkerCluster.css" />
+	<link rel="stylesheet" href="./dist/MarkerCluster.Default.css" />
+	<script src="./dist/leaflet.markercluster-src.js"></script>
+
     <link rel="stylesheet" type="text/css" href="./canvas.css">
 </head>
 <body>
@@ -22,7 +27,7 @@
         <div class="popupContent" >
             <button onclick="closeCamera(event)" >&#66327;</button>
             <h2 id="cameraName" ></h2>
-            <img id="cameraImage" src="" />
+            <img id="cameraImage" src="" onerror="cameraError()" />
         </div>
     </div>
 
@@ -37,6 +42,10 @@
                 <div id="menuContentBox"></div>
             </div>
         </div>
+    </div>
+
+    <div id="locateUser" onclick="locateUser()">
+        <div id="locateIcon"></div>
     </div>
 
     <div id="map"></div>
