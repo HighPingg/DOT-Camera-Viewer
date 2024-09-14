@@ -65,7 +65,7 @@
 
 .popup {
     position: fixed;
-    z-index: 402;
+    z-index: 403;
     width: 100vw;
     height: 100vh;
     overflow: auto;
@@ -132,7 +132,7 @@
     height: 0;
     width: 0;
     position: fixed;
-    z-index: 401;
+    z-index: 402;
     background-color: rgba(0, 0, 0, 0.4);
 }
 
@@ -153,16 +153,19 @@
     text-align: center;
     vertical-align: middle;
     padding: 0.3rem;
-    height: 2.4rem;
-    width: 2.4rem;
+    height: 2.5rem;
+    width: 2.5rem;
     border-radius: 50%;
     color: black;
+    cursor: pointer;
     transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
 }
 
-#menuButton:hover {
-    background-color: rgba(10, 10, 10, 0.3);
-    color: black;
+@media (hover: hover) {
+    #menuButton:hover {
+        background-color: rgba(10, 10, 10, 0.3);
+        color: black;
+    }
 }
 
 #menuButton:active {
@@ -330,4 +333,32 @@ input:checked + .slider:before {
     justify-content: space-between;
     align-items: center;
     font-size: large;
+}
+
+#locateUser {
+    z-index: 401;
+    position: fixed;
+    height: 1.5rem;
+    width: 1.5rem;
+    right: 20px;
+    bottom: 30px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px grey;
+}
+
+@media (hover: hover) {
+    #locateUser:hover:hover {
+        background-color: lightgrey;
+    }
+}
+
+#locateIcon {
+    background-color: grey;
+    -webkit-mask: url('./assets/currentlocation.svg') no-repeat center;
+    mask: url('./assets/currentlocation.svg') no-repeat center;
+    height: 100%;
+    width: 100%;
 }

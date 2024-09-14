@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 // Create a marker with popup and add it to the map
                 var marker = L.marker([camera.latitude, camera.longitude], {
                     icon: L.icon({
-                        iconUrl: 'assets/cctv_icon.png',
+                        iconUrl: './assets/cctv_icon.svg',
                         iconSize: [38, 45],
                         iconAnchor: [18.5, 45],
                         popupAnchor: [0, -46]
@@ -288,6 +288,53 @@ function toggleClustering() {
     Object.keys(cameraIDsByArea).forEach((area) => {
         showByAreaMarker(area);
     });
+}
+
+var currMarker;
+var pannedMap = false;
+
+function locateUser() {
+    if (!currMarker) {
+        map.locate({
+            enableHighAccuracy: true,
+            watch: true
+        });
+        
+        map.on('locationfound', onLocationFound);
+        map.on('movestart', onMapPan);
+    } else {
+        map.setView(currMarker.getLatLng(), 15);
+    }
+
+    if (currMarker) {
+        locateIcon.style["background-color"] = "#0A66C2";
+    }
+}
+
+function onLocationFound(e) {
+    if (!currMarker) {
+        currMarker = L.marker(e.latlng, {
+            icon: L.icon({
+                iconUrl: './assets/currentLocationMarker.svg',
+                iconSize: [38, 45],
+                iconAnchor: [18.5, 45]
+            })
+        }).addTo(map);
+
+        map.setView(e.latlng, 15);
+        locateIcon.style["background-color"] = "#0A66C2";
+
+    } else {
+        currMarker.setLatLng(e.latlng);
+    }
+}
+
+function onMapPan(e) {
+    if (pannedMap) {
+        locateIcon.style["background-color"] = "grey";
+    } else {
+        pannedMap = true;
+    }
 }
 
 window.addEventListener("click", (event) => {

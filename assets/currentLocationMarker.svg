@@ -1,0 +1,23 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Border -->
+  <circle cx="60" cy="60" r="40.4" fill="#000000" />
+
+  <!-- Outer Circle -->
+  <circle cx="60" cy="60" r="40" fill="#FFFFFF" />
+
+  <!-- Inner Circle -->
+  <circle cx="60" cy="60" r="30" fill="#4285F4">
+    <animate 
+      attributeName="r" 
+      values="20;30;20" 
+      dur="4s" 
+      repeatCount="indefinite" 
+    />
+    <animate 
+      attributeName="opacity" 
+      values="1;0.9;1" 
+      dur="3s" 
+      repeatCount="indefinite" 
+    />
+  </circle>
+</svg>
